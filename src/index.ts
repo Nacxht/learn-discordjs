@@ -11,7 +11,4 @@ client.once(Events.ClientReady, (readyClient) => {
 	logger.info(`Logged in as ${readyClient.user.tag}`);
 });
 
-// Creating slash command
-//
-
 client.login(botConfig.token);

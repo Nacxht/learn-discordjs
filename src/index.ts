@@ -1,14 +1,16 @@
-import { Client, Events, GatewayIntentBits } from "discord.js";
-import { logger } from "./bot/utils/logger.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import { botConfig } from "./config/config.js";
+import { deployCommand } from "./bot/commands/init.js";
+import { eventHandlerInit } from "./bot/events/init.js";
 
-// Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
-// Run the code (once) when the client is ready
-client.once(Events.ClientReady, (readyClient) => {
-	logger.info(`Bot is turned on`);
-	logger.info(`Logged in as ${readyClient.user.tag}`);
+// Create new Client instance
+const client: Client = new Client({
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages],
 });
 
+// Initializer
+await deployCommand(); // Deploying commands
+await eventHandlerInit(client); // Event handler
+
+// Run bot
 client.login(botConfig.token);

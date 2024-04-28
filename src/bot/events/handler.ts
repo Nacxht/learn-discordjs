@@ -13,10 +13,11 @@ export async function onInteractionCreate(client: Client) {
 	client.on("interactionCreate", async (interaction) => {
 		if (!interaction.isCommand()) return;
 		const commandName = await snakeToCamel(interaction.commandName);
+		const command = commands[commandName as keyof typeof commands];
 
 		try {
-			if (commands[commandName as keyof typeof commands]) {
-				commands[commandName as keyof typeof commands].execute(interaction);
+			if (command) {
+				command.execute(interaction);
 			} else {
 				logger.warn(`No commands matching "${interaction.commandName}" was found`);
 			}

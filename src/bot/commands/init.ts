@@ -1,10 +1,11 @@
 import { REST, Routes } from "discord.js";
 import { botConfig } from "../../config/config.js";
 import { logger } from "../utils/logger.js";
-import { ping, stringInput, choices, info } from "./basic.js";
-import { ban } from "./moderation.js";
 
-export const commands = { ping, stringInput, choices, info, ban };
+import * as basic from "./basic.js";
+import * as moderation from "./moderation.js";
+
+export const commands = Object.assign({}, basic, moderation);
 const commandsData = Object.values(commands).map((command) => command.data);
 
 export async function deployCommand() {

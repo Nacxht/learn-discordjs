@@ -29,14 +29,14 @@ export async function onInteractionCreate(client: Client) {
     });
 
     client.on("interactionCreate", async (interaction) => {
-        const camelCommandName = interaction.isCommand() ? await snakeToCamel(interaction.commandName) : null;
+        if (!interaction.isAutocomplete()) return;
+        const camelCommandName = await snakeToCamel(interaction.commandName);
         const command = commands[camelCommandName as keyof typeof commands] as SlashCommand;
 
-        if (!interaction.isAutocomplete()) return;
-        if (!command) return;
-
         try {
+            if (!command) return;
             if (!(typeof command.autocomplete === "function")) return;
+
             await command.autocomplete(interaction);
         } catch (error: any) {
             logger.error(`${error.name} - ${error.message}`);

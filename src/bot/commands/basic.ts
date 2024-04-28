@@ -102,20 +102,43 @@ export const autocomplete: SlashCommand = {
     async autocomplete(interaction: AutocompleteInteraction) {
         const focusedValue = interaction.options.getFocused();
         const choices = [
-            { id: 1, value: "no way" },
-            { id: 2, value: "yes way" },
-            { id: 3, value: "bawakdehel" },
-            { id: 4, value: "babi" },
-            { id: 5, value: "nigg" },
-            { id: 6, value: "suck my dig" },
-            { id: 7, value: "ligma balls" },
+            { id: "1", value: "no way" },
+            { id: "2", value: "yes way" },
+            { id: "3", value: "bawakdehel" },
+            { id: "4", value: "babi" },
+            { id: "5", value: "nigg" },
+            { id: "6", value: "suck my dig" },
+            { id: "7", value: "ligma balls" },
         ];
 
-        // const filtered = choices.filter(choice => choice.start)
-        console.log(focusedValue);
+        const filtered = choices.filter((choice) => choice.value.toLowerCase().startsWith(focusedValue.toLowerCase()));
+        const result = filtered.map((choice) => {
+            return {
+                name: choice.value,
+                value: choice.id,
+            };
+        });
+
+        return interaction.respond(result.splice(0, 10)).catch(() => {});
     },
 
     async execute(interaction: CommandInteraction) {
-        return interaction.reply(`Replied`);
+        const userChoice = interaction.options.get("query", true);
+        const choices = [
+            { id: "1", value: "no way" },
+            { id: "2", value: "yes way" },
+            { id: "3", value: "bawakdehel" },
+            { id: "4", value: "babi" },
+            { id: "5", value: "nigg" },
+            { id: "6", value: "suck my dig" },
+            { id: "7", value: "ligma balls" },
+        ];
+        const filtered = choices.find((choice) => choice.id === String(userChoice.value));
+
+        if (!filtered) {
+            return interaction.reply(`Not found!`);
+        }
+
+        return interaction.reply(`You choose ${filtered.value}`);
     },
 };

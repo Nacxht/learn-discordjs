@@ -1,4 +1,5 @@
-import { PermissionFlagsBits, SlashCommandBuilder, CommandInteraction } from "discord.js";
+import { PermissionFlagsBits, SlashCommandBuilder, CommandInteraction, ActionRowBuilder } from "discord.js";
+import { Button } from "../components/buttons.js";
 
 // Ban
 export const ban = {
@@ -37,7 +38,14 @@ export const kick = {
             reason: interaction.options.get("reason")?.value || "No reason provided",
         };
 
-        await interaction.reply(`Kicking: ${data.target.username}\nFor reason: ${data.reason}`);
-        return interaction.guild?.members.kick(data.target);
+        const confirm = await new Button("confirm", "Confirm Kick").buttonDanger();
+        const cancel = await new Button("cancel", "Cancel").buttonSecondary();
+        const row = new ActionRowBuilder().addComponents(cancel, confirm) as any;
+
+        await interaction.reply({
+            content: `Are you sure want to kick ${data.target}\nFor reason "${data.reason}"?`,
+            components: [row],
+        });
+        // return interaction.guild?.members.kick(data.target);
     },
 };

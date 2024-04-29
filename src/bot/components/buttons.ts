@@ -4,11 +4,13 @@ export class Button {
     customId: string;
     label: string;
     isDisable: boolean;
+    emoji: string;
 
-    constructor(customId: string, label: string, isDisable?: boolean) {
+    constructor(customId: string, label: string, isDisable?: boolean, emoji?: string) {
         this.customId = customId;
         this.label = label;
         this.isDisable = isDisable || false;
+        this.emoji = emoji || "";
     }
 
     async buttonPrimary() {
@@ -41,14 +43,5 @@ export class Button {
             .setLabel(this.label)
             .setStyle(ButtonStyle.Danger)
             .setDisabled(this.isDisable);
-    }
-
-    async buttonLink(url: string) {
-        return new ButtonBuilder()
-            .setCustomId(this.customId)
-            .setLabel(this.label)
-            .setStyle(ButtonStyle.Link)
-            .setDisabled(this.isDisable)
-            .setURL(url);
     }
 }

@@ -1,4 +1,10 @@
-import { PermissionFlagsBits, SlashCommandBuilder, CommandInteraction, ActionRowBuilder } from "discord.js";
+import {
+    PermissionFlagsBits,
+    SlashCommandBuilder,
+    CommandInteraction,
+    ActionRowBuilder,
+    ButtonBuilder,
+} from "discord.js";
 import { Button } from "../components/buttons.js";
 
 // Ban
@@ -16,6 +22,42 @@ export const ban = {
             target: interaction.options.getUser("target", true),
             reason: interaction.options.get("reason")?.value || "No reason provided",
         };
+
+        const confirm = await new Button("confirm", "Confirm Ban").buttonDanger();
+        const cancel = await new Button("cacncel", "Cancel").buttonSecondary();
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(cancel, confirm);
+
+        try {
+            const response = await interaction.reply({
+                content: `Are you sure want to ban ${data.target}\nFor reason "${data.reason}"?`,
+                components: [row],
+            });
+
+            const confirmation = await response.awaitMessageComponent({
+                filter: (i) => i.user.id === interaction.user.id,
+                time: 60_000,
+            });
+
+            switch (confirmation.customId) {
+                case "confirm":
+                    await interaction.editReply({
+                        content: `Banning ${data.target.username}\nFor reason: "${data.reason}"`,
+                        components: [],
+                    });
+                    return interaction.guild?.members.ban(data.target);
+
+                default:
+                    return interaction.editReply({
+                        content: `Cancelled to kicking ${data.target}`,
+                        components: [],
+                    });
+            }
+        } catch (error) {
+            await interaction.editReply({
+                content: `Confirmation not received within 1 minute, cancelling...`,
+                components: [],
+            });
+        }
 
         await interaction.reply(`Banning: ${data.target.username}\nFor reason: ${data.reason}`);
         return interaction.guild?.members.ban(data.target);
@@ -40,12 +82,38 @@ export const kick = {
 
         const confirm = await new Button("confirm", "Confirm Kick").buttonDanger();
         const cancel = await new Button("cancel", "Cancel").buttonSecondary();
-        const row = new ActionRowBuilder().addComponents(cancel, confirm) as any;
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(cancel, confirm);
 
-        await interaction.reply({
-            content: `Are you sure want to kick ${data.target}\nFor reason "${data.reason}"?`,
-            components: [row],
-        });
-        // return interaction.guild?.members.kick(data.target);
+        try {
+            const response = await interaction.reply({
+                content: `Are you sure want to kick ${data.target}\nFor reason "${data.reason}"?`,
+                components: [row],
+            });
+
+            const confirmation = await response.awaitMessageComponent({
+                filter: (i) => i.user.id === interaction.user.id,
+                time: 60_000,
+            });
+
+            switch (confirmation.customId) {
+                case "confirm":
+                    await interaction.editReply({
+                        content: `Kicking ${data.target.username}\nFor reason: "${data.reason}"`,
+                        components: [],
+                    });
+                    return interaction.guild?.members.kick(data.target);
+
+                default:
+                    return interaction.editReply({
+                        content: `Cancelled to kicking ${data.target}`,
+                        components: [],
+                    });
+            }
+        } catch (error) {
+            await interaction.editReply({
+                content: `Confirmation not received within 1 minute, cancelling...`,
+                components: [],
+            });
+        }
     },
 };

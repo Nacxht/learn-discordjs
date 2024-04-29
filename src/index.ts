@@ -5,7 +5,7 @@ import { eventHandlerInit } from "./bot/events/init.js";
 
 // Create new Client instance
 const client: Client = new Client({
-	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages],
 });
 
 // Initializer
